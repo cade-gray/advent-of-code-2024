@@ -23,11 +23,7 @@ func main() {
 	// Get difference of the left and right arrays, ensuring the difference is positive
 	diffArr := []int{}
 	for i := 0; i < len(left); i++ {
-		if left[i] > right[i] {
-			diffArr = append(diffArr, left[i]-right[i])
-		} else {
-			diffArr = append(diffArr, right[i]-left[i])
-		}
+		diffArr = append(diffArr, abs(left[i]-right[i]))
 	}
 
 	// Sum up the diffArr for the final answer for part 1
@@ -88,4 +84,10 @@ func readInputFile(filename string) ([]int, []int, error) {
 	}
 
 	return left, right, nil
+}
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
 }
