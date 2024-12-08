@@ -25,11 +25,10 @@ func main() {
 		for i := 0; i < len(values); i++ {
 			intValues[i], _ = strconv.Atoi(values[i])
 		}
-		safe, changeCd := safetyCheck(intValues)
-		if safe {
-			fmt.Println(values, "Are Safe and the change is", changeCd)
+		safe := safetyCheck(intValues)
+		safeDampener := safetyCheckDampener(intValues)
+		if safe || safeDampener {
 			safeCount++
-
 		} else {
 			fmt.Println(values, "Are Unsafe")
 		}
@@ -37,39 +36,72 @@ func main() {
 	fmt.Println("Total Safe Lines are", safeCount)
 }
 
-func safetyCheck(values []int) (bool, string) {
-	unsafe := false
-	prev := 0
-	changeCd := ""
+func safetyCheck(values []int) bool {
+	dec := isDecreasing(values)
+	inc := isIncreasing(values)
+	max := MaxDiff(values, 3)
+	min := minDiff(values, 1)
+	return (dec || inc) && max && min
+}
+
+func safetyCheckDampener(values []int) bool {
 	for i := 0; i < len(values); i++ {
-		curr := values[i]
+		valuesCpy := append([]int{}, values[:i]...)
+		valuesCpy = append(valuesCpy, values[i+1:]...)
+		if safetyCheck(valuesCpy) {
+			return true
+		}
+	}
+	return false
+}
+
+func isIncreasing(values []int) bool {
+	increasing := true
+	for i := 0; i < len(values); i++ {
 		if i != 0 {
-			if i == 1 {
-				if curr < prev && safeChange(curr, prev) {
-					changeCd = "dec"
-				} else if curr > prev && safeChange(curr, prev) {
-					changeCd = "inc"
-				} else {
-					unsafe = true
-				}
-			} else {
-				if prev == curr {
-					unsafe = true
-				} else if changeCd == "dec" {
-					if curr > prev || !safeChange(curr, prev) {
-						unsafe = true
-					}
-				} else if changeCd == "inc" {
-					if curr < prev || !safeChange(curr, prev) {
-						unsafe = true
-					}
-				}
+			if values[i] < values[i-1] {
+				increasing = false
 			}
 		}
-		prev = curr
 	}
-	return !unsafe, changeCd
+	return increasing
+}
 
+func isDecreasing(values []int) bool {
+	decreasing := true
+	for i := 0; i < len(values); i++ {
+		if i != 0 {
+			if values[i] > values[i-1] {
+				decreasing = false
+			}
+		}
+	}
+	return decreasing
+}
+
+func minDiff(input []int, min int) bool {
+	for i := 1; i < len(input); i++ {
+		if absValue(input[i]-input[i-1]) < min {
+			return false
+		}
+	}
+	return true
+}
+
+func MaxDiff(input []int, max int) bool {
+	for i := 1; i < len(input); i++ {
+		if absValue(input[i]-input[i-1]) > max {
+			return false
+		}
+	}
+	return true
+}
+
+func absValue(value int) int {
+	if value < 0 {
+		value = value * -1
+	}
+	return value
 }
 
 func safeChange(curr, prev int) bool {
