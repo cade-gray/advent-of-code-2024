@@ -40,6 +40,17 @@ func main() {
 	fmt.Println("Total Safe Lines with Dampener are", SafeDampenerCount)
 }
 
+/*
+Safety Check function checks if the slice meets the following criteria:
+- The levels are either all increasing or all decreasing.
+- Any two adjacent levels differ by at least one and at most three.
+
+Parameters:
+- values: A slice of integers representing the levels from the input file.
+
+Returns:
+- A boolean value indicating whether the slice meets the criteria.
+*/
 func safetyCheck(values []int) bool {
 	dec := utils.IsDecreasing(values)
 	inc := utils.IsIncreasing(values)
@@ -48,6 +59,18 @@ func safetyCheck(values []int) bool {
 	return (dec || inc) && max && min
 }
 
+/*
+Safety Check Dampener function checks if the slice meets the following criteria:
+- The levels are either all increasing or all decreasing.
+- Any two adjacent levels differ by at least one and at most three.
+- The slice is safe with one element removed.
+
+Parameters:
+- values: A slice of integers representing the levels from the input file.
+
+Returns:
+- A boolean value indicating whether the slice meets the criteria.
+*/
 func safetyCheckDampener(values []int) bool {
 	// Loop through each element in the slice and remove it and check if the slice is safe with it removed.
 	for i := 0; i < len(values); i++ {
