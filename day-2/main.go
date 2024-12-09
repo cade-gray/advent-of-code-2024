@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"day-2/utils"
 	"fmt"
 	"os"
 	"strconv"
@@ -18,6 +19,7 @@ func main() {
 	// Declare a scanner to read the file.
 	scanner := bufio.NewScanner(file)
 	safeCount := 0
+	SafeDampenerCount := 0
 	for scanner.Scan() {
 		line := scanner.Text()
 		values := strings.Fields(line)
@@ -27,93 +29,35 @@ func main() {
 		}
 		safe := safetyCheck(intValues)
 		safeDampener := safetyCheckDampener(intValues)
-		if safe || safeDampener {
+		if safe {
 			safeCount++
-		} else {
-			fmt.Println(values, "Are Unsafe")
+		}
+		if safe || safeDampener {
+			SafeDampenerCount++
 		}
 	}
 	fmt.Println("Total Safe Lines are", safeCount)
+	fmt.Println("Total Safe Lines with Dampener are", SafeDampenerCount)
 }
 
 func safetyCheck(values []int) bool {
-	dec := isDecreasing(values)
-	inc := isIncreasing(values)
-	max := MaxDiff(values, 3)
-	min := minDiff(values, 1)
+	dec := utils.IsDecreasing(values)
+	inc := utils.IsIncreasing(values)
+	max := utils.MaxDiff(values, 3)
+	min := utils.MinDiff(values, 1)
 	return (dec || inc) && max && min
 }
 
 func safetyCheckDampener(values []int) bool {
+	// Loop through each element in the slice and remove it and check if the slice is safe with it removed.
 	for i := 0; i < len(values); i++ {
+		// Copy the slice
 		valuesCpy := append([]int{}, values[:i]...)
+		// Append the rest of the slice, excluding/cutting the current element
 		valuesCpy = append(valuesCpy, values[i+1:]...)
 		if safetyCheck(valuesCpy) {
 			return true
 		}
 	}
 	return false
-}
-
-func isIncreasing(values []int) bool {
-	increasing := true
-	for i := 0; i < len(values); i++ {
-		if i != 0 {
-			if values[i] < values[i-1] {
-				increasing = false
-			}
-		}
-	}
-	return increasing
-}
-
-func isDecreasing(values []int) bool {
-	decreasing := true
-	for i := 0; i < len(values); i++ {
-		if i != 0 {
-			if values[i] > values[i-1] {
-				decreasing = false
-			}
-		}
-	}
-	return decreasing
-}
-
-func minDiff(input []int, min int) bool {
-	for i := 1; i < len(input); i++ {
-		if absValue(input[i]-input[i-1]) < min {
-			return false
-		}
-	}
-	return true
-}
-
-func MaxDiff(input []int, max int) bool {
-	for i := 1; i < len(input); i++ {
-		if absValue(input[i]-input[i-1]) > max {
-			return false
-		}
-	}
-	return true
-}
-
-func absValue(value int) int {
-	if value < 0 {
-		value = value * -1
-	}
-	return value
-}
-
-func safeChange(curr, prev int) bool {
-	safelyChanged := true
-	change := prev - curr
-	if change < 0 {
-		change = change * -1
-	}
-	if change >= 1 && change <= 3 {
-		safelyChanged = true
-	} else {
-		safelyChanged = false
-	}
-	return safelyChanged
 }
