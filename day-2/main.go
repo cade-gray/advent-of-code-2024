@@ -7,9 +7,12 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func main() {
+	// Record the start time of the program
+	start := time.Now()
 	// Open the file using os package
 	file, err := os.Open("input.txt")
 	if err != nil {
@@ -38,6 +41,10 @@ func main() {
 	}
 	fmt.Println("Total Safe Lines are", safeCount)
 	fmt.Println("Total Safe Lines with Dampener are", SafeDampenerCount)
+
+	// Calculate and print the elapsed time
+	elapsed := time.Since(start)
+	fmt.Printf("Execution time: %s\n", elapsed)
 }
 
 /*
